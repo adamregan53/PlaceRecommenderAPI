@@ -30,9 +30,10 @@ db = firestore.client()
 
 ##place object class
 class Place(object):
-    def __init__(self, docId, placeId, name, types=[]):
+    def __init__(self, docId, placeId, locationRef, name, types=[]):
         self.docId = docId
         self.placeId = placeId
+        self.locationRef = locationRef
         self.name = name
         self.types = types
 
@@ -40,27 +41,10 @@ class Place(object):
 ##returns places
 @app.route('/')
 def index():
-    ##init json array which will contain a list of place objects
-    jsonPlacesArray = []
 
-    ##read data from firebase
-    placeDoc = db.collection(u'places').stream()
+    return {"index"}
 
-    ##iterate over firebase data
-    for doc in placeDoc:
-        placeDict = doc.to_dict()
-        place = Place(doc.id, placeDict[u'id'], placeDict[u'name'], placeDict[u'types'])
-        print(f'{place.docId}, {place.placeId}, {place.name}, {place.types}')
 
-        ##convert place into object
-        jsonPlace = {}
-        jsonPlace['docId'] = place.docId
-        jsonPlace['placeId'] = place.placeId
-        jsonPlace['name'] = place.name
-        jsonPlace['types'] = place.types
-        jsonPlacesArray.append(jsonPlace)
-    
-    return {"places": jsonPlacesArray}
 
 
 ##returns recommendations
@@ -79,7 +63,8 @@ def findRecommendation():
     jsonReceived['types'] = placeReceived.types
 
     ##read data from firebase
-    placeDoc = db.collection(u'places').stream()
+    placeDoc = db.collection(u'locations').document(placeReceived.locationRef).collection(u'places').stream()
+
 
     ##iterate over firebase data
     for doc in placeDoc:
@@ -102,6 +87,10 @@ def findRecommendation():
 
     ##read json into pandas datafram
     places_df = pd.read_json(jsonPlacesArrayDump)
+    print(places_df)
+
+    ##remove duplicated on id column
+    places_df.drop_duplicates(subset = ["placeId"])
     print(places_df)
 
     ##separate type array values
