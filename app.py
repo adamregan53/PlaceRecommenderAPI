@@ -54,27 +54,30 @@ def findRecommendation():
     jsonPlacesArray = [] ##init places array from firebase response
     jsonResponseArray = [] ##init response array return
 
-    placeReceived = Place(docId = request.json[u'docId'], placeId = request.json[u'placeId'], name = request.json[u'name'], types = request.json[u'types'])
+    placeReceived = Place(docId = request.json[u'docId'], placeId = request.json[u'placeId'], locationRef = request.json[u'locationRef'], name = request.json[u'name'], types = request.json[u'types'])
     ##convert place into object
     jsonReceived = {}
     jsonReceived['docId'] = placeReceived.docId
     jsonReceived['placeId'] = placeReceived.placeId
+    jsonReceived['locationRef'] = placeReceived.locationRef
     jsonReceived['name'] = placeReceived.name
     jsonReceived['types'] = placeReceived.types
 
     ##read data from firebase
+
     placeDoc = db.collection(u'locations').document(placeReceived.locationRef).collection(u'places').stream()
 
 
     ##iterate over firebase data
     for doc in placeDoc:
         placeDict = doc.to_dict()
-        place = Place(doc.id, placeDict[u'id'], placeDict[u'name'], placeDict[u'types'])
+        place = Place(doc.id, placeDict[u'id'], placeReceived.locationRef, placeDict[u'name'], placeDict[u'types'])
 
         ##convert place into object
         jsonPlace = {}
         jsonPlace['docId'] = place.docId
         jsonPlace['placeId'] = place.placeId
+        jsonPlace['locationRef'] = place.locationRef
         jsonPlace['name'] = place.name
         jsonPlace['types'] = place.types
         jsonPlacesArray.append(jsonPlace)
@@ -133,6 +136,50 @@ def findRecommendation():
     
     ##return
     return {"recommendation": jsonResponseArray}
+
+
+
+
+@app.route('/test', methods=['POST'])
+def testRecommend():
+    jsonPlacesArray = [] ##init places array from firebase response
+    jsonResponseArray = [] ##init response array return
+
+    placeReceived = Place(docId = request.json[u'docId'], placeId = request.json[u'placeId'], locationRef = request.json[u'locationRef'], name = request.json[u'name'], types = request.json[u'types'])
+    ##convert place into object
+    print("Recieved from Post Request")
+    jsonReceived = {}
+    jsonReceived['docId'] = placeReceived.docId
+    jsonReceived['placeId'] = placeReceived.placeId
+    jsonReceived['locationRef'] = placeReceived.locationRef
+    jsonReceived['name'] = placeReceived.name
+    jsonReceived['types'] = placeReceived.types
+    print(jsonReceived)
+
+    ##read data from firebase
+    placeDoc = db.collection(u'locations').document(placeReceived.locationRef).collection(u'places').stream()
+
+    ##iterate over firebase data
+    print("Received from firebase")
+    for doc in placeDoc:
+        placeDict = doc.to_dict()
+        print(placeDict)
+        place = Place(doc.id, placeDict[u'id'], placeReceived.locationRef,placeDict[u'name'], placeDict[u'types'])
+        print(place)
+
+        ##convert place into object
+        jsonPlace = {}
+        jsonPlace['docId'] = place.docId
+        jsonPlace['placeId'] = place.placeId
+        jsonPlace['locationRef'] = place.locationRef
+        jsonPlace['name'] = place.name
+        jsonPlace['types'] = place.types
+        jsonPlacesArray.append(jsonPlace)
+        print(jsonPlacesArray)
+
+    return {"test": jsonPlacesArray}
+
+
 
     
 def stem(text):
