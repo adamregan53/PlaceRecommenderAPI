@@ -1,1 +1,1 @@
-echo ${FIREBASE_CREDENTIALS} > /service-account.json
+echo ${FIREBASE_CREDENTIALS} > /app/service-account.json
