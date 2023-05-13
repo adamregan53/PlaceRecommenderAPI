@@ -134,8 +134,11 @@ def findRecommendation():
             jsonResponse['docId'] = places_df.iloc[place[0]]['docId']
             jsonResponse['placeId'] = places_df.iloc[place[0]]['placeId']
             jsonResponse['name'] = places_df.iloc[place[0]]['name']
-            jsonResponseArray.append(jsonResponse)
-        
+            
+            ##remove the place received in the request from the response array
+            if jsonResponse['docId'] != placeReceived.docId:
+                jsonResponseArray.append(jsonResponse)
+    
         ##return
         return jsonResponseArray
     
