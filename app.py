@@ -126,7 +126,7 @@ def findRecommendation():
         ##find recommendations
         place_index = places_df[places_df['placeId'] == placeReceived.placeId].index[0]
         distances = similarity[place_index]
-        places_list = sorted(list(enumerate(distances)), reverse = True, key = lambda x:x[1])[1:4]
+        places_list = sorted(list(enumerate(distances)), reverse = True, key = lambda x:x[1])[1:5]
 
         ##convert recommendations to json response
         for place in places_list:
