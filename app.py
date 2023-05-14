@@ -95,7 +95,7 @@ def findRecommendation():
         print(places_df)
 
         ##remove duplicated on id column
-        places_df.drop_duplicates(subset = ["placeId"])
+        places_df = places_df.drop_duplicates(subset = ["placeId"])
         print(places_df)
 
         ##separate type array values
